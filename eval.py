@@ -32,7 +32,7 @@ reader = csv.reader(open("PATH TO ASKME RESULTS FILE", encoding="utf-8"),
 next(reader)
 
 for id, row in enumerate(reader):
-    query_id, corpus_id, score = row[0], row[1], int(row[2])
+    query_id, corpus_id, score = row[0], row[1], float(row[2])
 
     if query_id not in askMeResults:
         askMeResults[query_id] = {corpus_id: score}
