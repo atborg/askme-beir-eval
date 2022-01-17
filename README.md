@@ -1,0 +1,1 @@
+modified script from Beir to evaluate AskMe - change the filepath to your AskMe output file for evaluation
