@@ -1,10 +1,19 @@
+import csv
+import logging
+import os
+import pathlib
+from typing import List, Dict, Tuple
+
+import pytrec_eval
 from beir import util, LoggingHandler
 from beir.datasets.data_loader import GenericDataLoader
-from typing import List, Dict, Tuple
-import pytrec_eval
-import pathlib, os
-import logging
-import csv
+
+#### variables to edit for desired evaluation ####
+dataset = "trec-covid"
+filePath = "example.tsv"
+##################################################
+
+
 
 #### code to print debug information to stdout
 logging.basicConfig(format='%(asctime)s - %(message)s',
@@ -14,20 +23,16 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
 #### /print debug information to stdout
 
 #### Download trec-covid.zip dataset and unzip the dataset (change name of dataset for a different Beir data)
-dataset = "trec-covid"
 url = "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/{}.zip".format(dataset)
 out_dir = os.path.join(pathlib.Path(__file__).parent.absolute(), "datasets")
 data_path = util.download_and_unzip(url, out_dir)
-
-
 corpus, queries, qrels = GenericDataLoader(data_path).load(split="test")
-
 
 #### load in AskMe answers to be evaluated (change path of AskMe results TSV file) ####
 
 askMeResults = {}
 
-reader = csv.reader(open("PATH TO ASKME RESULTS FILE", encoding="utf-8"),
+reader = csv.reader(open(filePath, encoding="utf-8"),
                     delimiter="\t", quoting=csv.QUOTE_MINIMAL)
 next(reader)
 
