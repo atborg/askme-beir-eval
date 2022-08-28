@@ -8,27 +8,36 @@ import pytrec_eval
 from beir import util, LoggingHandler
 from beir.datasets.data_loader import GenericDataLoader
 
-#### variables to edit for desired evaluation ####
-dataset = "trec-covid"
-filePath = "example.tsv"
-##################################################
+# file to evaluate (defualt is results.tsv)
+filePath = "results.tsv"
 
-
-
-#### code to print debug information to stdout
+# code to print debug information to stdout
 logging.basicConfig(format='%(asctime)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO,
                     handlers=[LoggingHandler()])
-#### /print debug information to stdout
 
-#### Download trec-covid.zip dataset and unzip the dataset (change name of dataset for a different Beir data)
+# ask for which dataset to use?
+datasetNames = {"1": "trec-covid", "2": "nfcorpus"}
+print("which dataset are you evaluating?")
+for number, name in datasetNames.items():
+    print("{}. {}".format(number, name))
+while True:
+    choice = input("enter number of your choice (1, 2, ...): ")
+    if choice not in datasetNames:
+        print("not a valid choice")
+        continue
+    else:
+        break
+dataset = datasetNames[choice]
+
+# Download trec-covid.zip dataset and unzip the dataset (change name of dataset for a different Beir data)
 url = "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/{}.zip".format(dataset)
 out_dir = os.path.join(pathlib.Path(__file__).parent.absolute(), "datasets")
 data_path = util.download_and_unzip(url, out_dir)
 corpus, queries, qrels = GenericDataLoader(data_path).load(split="test")
 
-#### load in AskMe answers to be evaluated (change path of AskMe results TSV file) ####
+# load in AskMe answers to be evaluated (change path of AskMe results TSV file)
 
 askMeResults = {}
 
@@ -36,7 +45,7 @@ reader = csv.reader(open(filePath, encoding="utf-8"),
                     delimiter="\t", quoting=csv.QUOTE_MINIMAL)
 next(reader)
 
-for id, row in enumerate(reader):
+for i, row in enumerate(reader):
     query_id, corpus_id, score = row[0], row[1], float(row[2])
 
     if query_id not in askMeResults:
@@ -44,11 +53,11 @@ for id, row in enumerate(reader):
     else:
         askMeResults[query_id][corpus_id] = score
 
-#### evaluation function modified from Beir for AskMe ####
+
+# evaluation function modified from Beir for AskMe
 def evaluate(qrels: Dict[str, Dict[str, int]],
              results: Dict[str, Dict[str, float]],
              k_values: List[int]) -> Tuple[Dict[str, float], Dict[str, float], Dict[str, float], Dict[str, float]]:
-
     ndcg = {}
     _map = {}
     recall = {}
@@ -87,7 +96,7 @@ def evaluate(qrels: Dict[str, Dict[str, int]],
 
     return ndcg, _map, recall, precision
 
-#### Evaluate your retrieval using NDCG@k, MAP@K ...
-logging.info("Retriever evaluation for k in: {}".format([1,3,5,10,100,1000]))
-ndcg, _map, recall, precision = evaluate(qrels, askMeResults, [1,3,5,10,100,1000])
 
+# Evaluate your retrieval using NDCG@k, MAP@K ...
+logging.info("Retriever evaluation for k in: {}".format([1, 3, 5, 10, 100, 1000]))
+ndcg, _map, recall, precision = evaluate(qrels, askMeResults, [1, 3, 5, 10, 100, 1000])

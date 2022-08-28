@@ -9,7 +9,5 @@
 
 ## steps to run evaluation
 
-1. open eval.py to edit the following variables at the top of the script
-2. change "dataset" variable to your desired BEIR [dataset](https://github.com/UKPLab/beir#beers-available-datasets)
-3. change "filePath" variable to your AskMe output file
-4. run the script!
+1. put your output file in the same directory as eval.py and name it "results.tsv"
+2. run the script!
