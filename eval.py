@@ -12,10 +12,12 @@ from beir.datasets.data_loader import GenericDataLoader
 filePath = "results.tsv"
 
 # code to print debug information to stdout
-logging.basicConfig(format='%(asctime)s - %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S',
-                    level=logging.INFO,
-                    handlers=[LoggingHandler()])
+logging.basicConfig(
+    format="%(asctime)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.INFO,
+    handlers=[LoggingHandler()],
+)
 
 # ask for which dataset to use?
 datasetNames = {"1": "trec-covid", "2": "nfcorpus"}
@@ -32,17 +34,21 @@ while True:
 dataset = datasetNames[choice]
 
 # Download trec-covid.zip dataset and unzip the dataset (change name of dataset for a different Beir data)
-url = "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/{}.zip".format(dataset)
+url = (
+    "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/{}.zip".format(
+        dataset
+    )
+)
 out_dir = os.path.join(pathlib.Path(__file__).parent.absolute(), "datasets")
 data_path = util.download_and_unzip(url, out_dir)
 corpus, queries, qrels = GenericDataLoader(data_path).load(split="test")
 
 # load in AskMe answers to be evaluated (change path of AskMe results TSV file)
-
 askMeResults = {}
 
-reader = csv.reader(open(filePath, encoding="utf-8"),
-                    delimiter="\t", quoting=csv.QUOTE_MINIMAL)
+reader = csv.reader(
+    open(filePath, encoding="utf-8"), delimiter="\t", quoting=csv.QUOTE_MINIMAL
+)
 next(reader)
 
 for i, row in enumerate(reader):
@@ -55,9 +61,11 @@ for i, row in enumerate(reader):
 
 
 # evaluation function modified from Beir for AskMe
-def evaluate(qrels: Dict[str, Dict[str, int]],
-             results: Dict[str, Dict[str, float]],
-             k_values: List[int]) -> Tuple[Dict[str, float], Dict[str, float], Dict[str, float], Dict[str, float]]:
+def evaluate(
+    qrels: Dict[str, Dict[str, int]],
+    results: Dict[str, Dict[str, float]],
+    k_values: List[int],
+) -> Tuple[Dict[str, float], Dict[str, float], Dict[str, float], Dict[str, float]]:
     ndcg = {}
     _map = {}
     recall = {}
@@ -73,7 +81,9 @@ def evaluate(qrels: Dict[str, Dict[str, int]],
     ndcg_string = "ndcg_cut." + ",".join([str(k) for k in k_values])
     recall_string = "recall." + ",".join([str(k) for k in k_values])
     precision_string = "P." + ",".join([str(k) for k in k_values])
-    evaluator = pytrec_eval.RelevanceEvaluator(qrels, {map_string, ndcg_string, recall_string, precision_string})
+    evaluator = pytrec_eval.RelevanceEvaluator(
+        qrels, {map_string, ndcg_string, recall_string, precision_string}
+    )
     scores = evaluator.evaluate(results)
 
     for query_id in scores.keys():
