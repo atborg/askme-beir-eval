@@ -33,7 +33,7 @@ while True:
         break
 dataset = datasetNames[choice]
 
-# Download trec-covid.zip dataset and unzip the dataset (change name of dataset for a different Beir data)
+# download trec-covid.zip dataset and unzip the dataset (change name of dataset for a different Beir data)
 url = (
     "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/{}.zip".format(
         dataset
@@ -107,6 +107,6 @@ def evaluate(
     return ndcg, _map, recall, precision
 
 
-# Evaluate your retrieval using NDCG@k, MAP@K ...
+# evaluate your retrieval using NDCG@k, MAP@K ...
 logging.info("Retriever evaluation for k in: {}".format([1, 3, 5, 10, 100, 1000]))
 ndcg, _map, recall, precision = evaluate(qrels, askMeResults, [1, 3, 5, 10, 100, 1000])
